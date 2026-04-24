@@ -1,0 +1,16 @@
+PODS:
+  - KKUtilsKitSwift (0.1.0)
+
+DEPENDENCIES:
+  - KKUtilsKitSwift (from `../`)
+
+EXTERNAL SOURCES:
+  KKUtilsKitSwift:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  KKUtilsKitSwift: 1af6f8c93f77d7e35de4ed6504b05244c362be67
+
+PODFILE CHECKSUM: 78a788953d2c24778d833676fe0f6c768bb81304
+
+COCOAPODS: 1.16.2

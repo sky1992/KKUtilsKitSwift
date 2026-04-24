@@ -1,0 +1,217 @@
+import Foundation
+import UIKit
+
+public final class KKToolUtils {
+    
+    // MARK: - Bank Card Formatting
+    
+    public static func format_card(_ num: String) -> String {
+        let cleaned = cardNumber.replacingOccurrences(of: " ", with: "")
+        guard !cleaned.isEmpty else { return "" }
+        
+        var result = ""
+        var index = cleaned.startIndex
+        
+        while index < cleaned.endIndex {
+            let endIndex = cleaned.index(index, offsetBy: 4, limitedBy: cleaned.endIndex) ?? cleaned.endIndex
+            let chunk = cleaned[index..<endIndex]
+            result += chunk
+            if endIndex < cleaned.endIndex {
+                result += " "
+            }
+            index = endIndex
+        }
+        
+        return result
+    }
+    
+    // MARK: - Indian Amount Formatting
+    
+    public static func format_amount(_ amount: String) -> String {
+        guard let doubleValue = Double(amount) else { return amount }
+        let intValue = Int(doubleValue)
+        
+        if intValue == 0 { return "0" }
+        
+        let numberString = String(abs(intValue))
+        let chars = Array(numberString)
+        let length = chars.count
+        
+        if length <= 3 {
+            return String(intValue)
+        }
+        
+        var result = ""
+        var index = length - 1
+        var groupCount = 0
+        
+        while index >= 0 {
+            result = String(chars[index]) + result
+            groupCount += 1
+            
+            if index > 0 {
+                if groupCount == 3 {
+                    result = "," + result
+                    groupCount = 0
+                } else if groupCount == 2 && index > 1 {
+                    result = "," + result
+                    groupCount = 0
+                }
+            }
+            
+            index -= 1
+        }
+        
+        return intValue < 0 ? "-" + result : result
+    }
+    
+    // MARK: - Hex Color Parsing
+    
+    public static func color_from_hex(_ hexString: String) -> UIColor {
+        var hex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
+        hex = hex.uppercased()
+        
+        if hex.hasPrefix("#") {
+            hex.removeFirst()
+        }
+        
+        var alpha: CGFloat = 1.0
+        var red: CGFloat = 0.0
+        var green: CGFloat = 0.0
+        var blue: CGFloat = 0.0
+        
+        switch hex.count {
+        case 3:
+            let chars = Array(hex)
+            if chars.count == 3 {
+                let r = String(repeating: chars[0], count: 2)
+                let g = String(repeating: chars[1], count: 2)
+                let b = String(repeating: chars[2], count: 2)
+                red = CGFloat(Int(r, radix: 16) ?? 0) / 255.0
+                green = CGFloat(Int(g, radix: 16) ?? 0) / 255.0
+                blue = CGFloat(Int(b, radix: 16) ?? 0) / 255.0
+            }
+        case 6:
+            let chars = Array(hex)
+            if chars.count == 6 {
+                let r = String(chars[0...1])
+                let g = String(chars[2...3])
+                let b = String(chars[4...5])
+                red = CGFloat(Int(r, radix: 16) ?? 0) / 255.0
+                green = CGFloat(Int(g, radix: 16) ?? 0) / 255.0
+                blue = CGFloat(Int(b, radix: 16) ?? 0) / 255.0
+            }
+        case 8:
+            let chars = Array(hex)
+            if chars.count == 8 {
+                let a = String(chars[0...1])
+                let r = String(chars[2...3])
+                let g = String(chars[4...5])
+                let b = String(chars[6...7])
+                alpha = CGFloat(Int(a, radix: 16) ?? 255) / 255.0
+                red = CGFloat(Int(r, radix: 16) ?? 0) / 255.0
+                green = CGFloat(Int(g, radix: 16) ?? 0) / 255.0
+                blue = CGFloat(Int(b, radix: 16) ?? 0) / 255.0
+            }
+        default:
+            return UIColor.clear
+        }
+        
+        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+    }
+    
+    // MARK: - Ubuntu Font Library
+    
+    public static func ubuntu_font(size: CGFloat, weight: UIFont.Weight = .regular) -> UIFont {
+        let weightString: String
+        switch weight {
+        case .bold:
+            weightString = "Bold"
+        case .light:
+            weightString = "Light"
+        case .medium:
+            weightString = "Medium"
+        default:
+            weightString = "Regular"
+        }
+        
+        let fontName = "Ubuntu-\(weightString)"
+        if let font = UIFont(name: fontName, size: size) {
+            return font
+        }
+        
+        return UIFont.systemFont(ofSize: size, weight: weight)
+    }
+    
+    // MARK: - KeyWindow Access
+    
+    public static var key_window: UIWindow? {
+        if #available(iOS 13.0, *) {
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene,
+                   scene.activationState == .foregroundActive {
+                    return windowScene.windows.first(where: { $0.isKeyWindow })
+                }
+            }
+        }
+        return UIApplication.shared.keyWindow
+    }
+    
+    // MARK: - Local Persistence
+    
+    private static let user_defaults = UserDefaults.standard
+    private static let key_prefix = "KKToolUtils_"
+    
+    public static func save_to_local(key: String, value: Any?) {
+        let fullKey = key_prefix + key
+        if let value = value {
+            user_defaults.set(value, forKey: fullKey)
+        } else {
+            user_defaults.removeObject(forKey: fullKey)
+        }
+        user_defaults.synchronize()
+    }
+    
+    public static func read_from_local(key: String) -> Any? {
+        let fullKey = key_prefix + key
+        return user_defaults.object(forKey: fullKey)
+    }
+    
+    public static func remove_from_local(key: String) {
+        let fullKey = key_prefix + key
+        user_defaults.removeObject(forKey: fullKey)
+        user_defaults.synchronize()
+    }
+    
+    public static func clear_local_namespace() {
+        let allKeys = user_defaults.dictionaryRepresentation().keys
+        for key in allKeys {
+            if key.hasPrefix(key_prefix) {
+                user_defaults.removeObject(forKey: key)
+            }
+        }
+        user_defaults.synchronize()
+    }
+    
+    // MARK: - Quick Access Properties
+    
+    public static var token: String? {
+        get { return read_from_local(key: "token") as? String }
+        set { save_to_local(key: "token", value: newValue) }
+    }
+    
+    public static var user_id: String? {
+        get { return read_from_local(key: "userId") as? String }
+        set { save_to_local(key: "userId", value: newValue) }
+    }
+    
+    public static var mobile: String? {
+        get { return read_from_local(key: "mobile") as? String }
+        set { save_to_local(key: "mobile", value: newValue) }
+    }
+    
+    public static var category_infos: Any? {
+        get { return read_from_local(key: "categoryInfos") }
+        set { save_to_local(key: "categoryInfos", value: newValue) }
+    }
+}
