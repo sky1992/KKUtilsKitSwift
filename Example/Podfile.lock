@@ -1,5 +1,5 @@
 PODS:
-  - KKUtilsKitSwift (0.1.0)
+  - KKUtilsKitSwift (0.1.2)
 
 DEPENDENCIES:
   - KKUtilsKitSwift (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  KKUtilsKitSwift: 1af6f8c93f77d7e35de4ed6504b05244c362be67
+  KKUtilsKitSwift: 7da949c16b1abfef70d897f86928300d90208899
 
-PODFILE CHECKSUM: 78a788953d2c24778d833676fe0f6c768bb81304
+PODFILE CHECKSUM: 3c4daf37e6a28fdb15ae5c0a8bf288465e7257e5
 
 COCOAPODS: 1.16.2

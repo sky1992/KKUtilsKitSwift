@@ -1,8 +1,8 @@
 {
   "name": "KKUtilsKitSwift",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "summary": "A short description of KKUtilsKitSwift.",
-  "description": "TODO: Add long description of the pod here.",
+  "description": "KKUtilsKitSwift",
   "homepage": "https://github.com/sky1992/KKUtilsKitSwift",
   "license": {
     "type": "MIT",
@@ -13,10 +13,10 @@
   },
   "source": {
     "git": "https://github.com/sky1992/KKUtilsKitSwift.git",
-    "tag": "0.1.0"
+    "tag": "0.1.2"
   },
   "platforms": {
-    "ios": "10.0"
+    "ios": "15.0"
   },
   "source_files": "KKUtilsKitSwift/Classes/**/*"
 }
