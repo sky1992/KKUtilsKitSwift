@@ -6,7 +6,7 @@ public final class KKToolUtils {
     // MARK: - Bank Card Formatting
     
     public static func format_card(_ num: String) -> String {
-        let cleaned = cardNumber.replacingOccurrences(of: " ", with: "")
+        let cleaned = num.replacingOccurrences(of: " ", with: "")
         guard !cleaned.isEmpty else { return "" }
         
         var result = ""
