@@ -214,4 +214,26 @@ public final class KKToolUtils {
         get { return read_from_local(key: "categoryInfos") }
         set { save_to_local(key: "categoryInfos", value: newValue) }
     }
+    
+    public static func language_en(_ en: String) -> String {
+        if let infos = category_infos as? [String: Any] {
+            guard let keyDict = infos[en] as? [String: String],
+                  let value = keyDict["en"], !value.isEmpty else {
+                return ""
+            }
+            return value
+        }
+        return ""
+    }
+    
+    public static func language_hi(_ hi: String) -> String {
+        if let infos = category_infos as? [String: Any] {
+            guard let keyDict = infos[hi] as? [String: String],
+                  let value = keyDict["hi"], !value.isEmpty else {
+                return ""
+            }
+            return value
+        }
+        return ""
+    }
 }
