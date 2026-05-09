@@ -44,18 +44,24 @@ public final class KKToolUtils {
         var result = ""
         var index = length - 1
         var groupCount = 0
+        var isFirstGroup = true
         
         while index >= 0 {
             result = String(chars[index]) + result
             groupCount += 1
             
             if index > 0 {
-                if groupCount == 3 {
-                    result = "," + result
-                    groupCount = 0
-                } else if groupCount == 2 && index > 1 {
-                    result = "," + result
-                    groupCount = 0
+                if isFirstGroup {
+                    if groupCount == 3 {
+                        result = "," + result
+                        groupCount = 0
+                        isFirstGroup = false
+                    }
+                } else {
+                    if groupCount == 2 {
+                        result = "," + result
+                        groupCount = 0
+                    }
                 }
             }
             
