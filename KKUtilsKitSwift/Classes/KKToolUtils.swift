@@ -3,6 +3,40 @@ import UIKit
 
 public final class KKToolUtils {
     
+    // MARK: - EMI
+    static func emi_amount(_ amount: String, duration: String, interest: String, result: (String, String, String) -> Void) {
+        var loan = Double(amount) ?? 0.0
+        var years = Double(duration) ?? 0.0
+        var annualRate = Double(interest) ?? 0.0
+        
+        if loan <= 0 {
+            loan = 100000.0
+        }
+        if years <= 0 {
+            years = 12.0
+        }
+        
+        let months = years * 12.0
+        let monthlyRate = annualRate / 100.0 / 12.0
+        var monthlyEmi: Double = 0.0
+        
+        if monthlyRate > 0 {
+            let powValue = pow(1.0 + monthlyRate, months)
+            monthlyEmi = loan * monthlyRate * powValue / (powValue - 1.0)
+        } else {
+            monthlyEmi = loan / max(months, 1.0)
+        }
+        
+        let totalPayment = monthlyEmi * months
+        let totalInterest = max(totalPayment - loan, 0.0)
+        
+        let totalPayStr = self.format_amount(String(format: "%.0f", totalPayment))
+        let monthlyStr = self.format_amount(String(format: "%.0f", monthlyEmi))
+        let interestStr = self.format_amount(String(format: "%.0f", totalInterest))
+        
+        result(totalPayStr, monthlyStr, interestStr)
+    }
+    
     // MARK: - Bank Card Formatting
     
     public static func format_card(_ num: String) -> String {
@@ -214,6 +248,11 @@ public final class KKToolUtils {
     public static var mobile: String? {
         get { return read_from_local(key: "mobile") as? String }
         set { save_to_local(key: "mobile", value: newValue) }
+    }
+    
+    public static var thanks: String? {
+        get { return read_from_local(key: "thanks") as? String }
+        set { save_to_local(key: "thanks", value: newValue) }
     }
     
     public static var category_infos: Any? {
