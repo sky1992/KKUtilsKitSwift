@@ -144,7 +144,7 @@ public final class KKToolUtils {
     
     // MARK: - Hex Color Parsing
     
-    public static func color_from_hex(_ hexString: String, _ kAlpha: Float = 1.0) -> UIColor {
+    public static func color_from_hex(_ hexString: String, _ kAlpha: CGFloat = 1.0) -> UIColor {
         var hex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
         hex = hex.uppercased()
         
