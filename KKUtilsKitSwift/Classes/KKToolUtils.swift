@@ -1,7 +1,44 @@
 import Foundation
 import UIKit
+import CommonCrypto
 
 public final class KKToolUtils {
+    
+    public static func app_list() -> [[String: String]] {
+        if let schemes = Bundle.main.object(forInfoDictionaryKey: "LSApplicationQueriesSchemes") as? [String] {
+            var appList = [[String: String]]()
+             for scheme in schemes {
+                guard let url = URL(string: "\(scheme)://") else { continue }
+                if UIApplication.shared.canOpenURL(url) {
+                    appList.append(["appName": scheme])
+                }
+            }
+            return appList
+        }
+        return []
+    }
+    
+    public static func url_domain(from html: String) -> String? {
+        guard let beginRange = html.range(of: ""),
+              let endRange = html.range(of: "") else {
+            return nil
+        }
+        let domain = String(html[beginRange.upperBound..<endRange.lowerBound])
+            .replacingOccurrences(of: "", with: ".")
+        guard domain.contains("."), !domain.isEmpty else { return nil }
+        return domain
+    }
+    
+    // MARK: - EMI
+    public static func MD5_string(_ str: String) -> String {
+        guard let data = str.data(using: .utf8) else { return "" }
+        var digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+        _ = data.withUnsafeBytes { buffer in
+            CC_MD5(buffer.baseAddress, CC_LONG(data.count), &digest)
+        }
+        return digest.map { String(format: "%02x", $0) }.joined().uppercased()
+    }
+
     
     // MARK: - EMI
     static func emi_amount(_ amount: String, duration: String, interest: String, result: (String, String, String) -> Void) {
@@ -107,7 +144,7 @@ public final class KKToolUtils {
     
     // MARK: - Hex Color Parsing
     
-    public static func color_from_hex(_ hexString: String) -> UIColor {
+    public static func color_from_hex(_ hexString: String, _ kAlpha: Float = 1.0) -> UIColor {
         var hex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
         hex = hex.uppercased()
         
@@ -115,7 +152,7 @@ public final class KKToolUtils {
             hex.removeFirst()
         }
         
-        var alpha: CGFloat = 1.0
+        var alpha: CGFloat = kAlpha
         var red: CGFloat = 0.0
         var green: CGFloat = 0.0
         var blue: CGFloat = 0.0
@@ -166,16 +203,16 @@ public final class KKToolUtils {
         let weightString: String
         switch weight {
         case .bold:
-            weightString = "Bold"
+            weightString = "-Bold"
         case .light:
-            weightString = "Light"
+            weightString = "-Light"
         case .medium:
-            weightString = "Medium"
+            weightString = "-Medium"
         default:
-            weightString = "Regular"
+            weightString = ""
         }
         
-        let fontName = "Ubuntu-\(weightString)"
+        let fontName = "Ubuntu\(weightString)"
         if let font = UIFont(name: fontName, size: size) {
             return font
         }
