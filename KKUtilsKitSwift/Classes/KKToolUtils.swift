@@ -259,7 +259,7 @@ public final class KKToolUtils {
     public static var alert_window: UIWindow? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
         alertWin = UIWindow(windowScene: scene)
-        alertWin?.windowLevel = .alert
+        alertWin?.windowLevel = UIWindowLevelAlert
         alertWin?.frame = UIScreen.main.bounds
         alertWin?.isHidden = false
         alertWin?.backgroundColor = .clear
