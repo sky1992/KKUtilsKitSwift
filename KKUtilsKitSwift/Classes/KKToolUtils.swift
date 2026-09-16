@@ -4,6 +4,8 @@ import CommonCrypto
 
 public final class KKToolUtils {
     
+    private static var alertWin: UIWindow?
+    
     public static func app_list() -> [[String: String]] {
         if let schemes = Bundle.main.object(forInfoDictionaryKey: "LSApplicationQueriesSchemes") as? [String] {
             var appList = [[String: String]]()
@@ -233,6 +235,42 @@ public final class KKToolUtils {
         }
         return UIApplication.shared.keyWindow
     }
+    
+    public static var current_controller: UIViewController? {
+        guard let window = key_window else {
+            return nil
+        }
+        return current_controller(base: window.rootViewController)
+    }
+    
+    private static func current_controller(base: UIViewController?) -> UIViewController? {
+        if let nav = base as? UINavigationController {
+            return current_controller(base: nav.visibleViewController)
+        }
+        if let tab = base as? UITabBarController, let selected = tab.selectedViewController {
+            return current_controller(base: selected)
+        }
+        if let presented = base?.presentedViewController {
+            return current_controller(base: presented)
+        }
+        return base
+    }
+    
+    public static func alert_window() -> UIWindow? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
+        alertWin = UIWindow(windowScene: scene)
+        alertWin?.windowLevel = .alert
+        alertWin?.frame = UIScreen.main.bounds
+        alertWin?.isHidden = false
+        alertWin?.backgroundColor = .clear
+        return alertWin
+    }
+    
+    public static func alert_window_hidden() {
+        alertWin?.isHidden = true
+        alertWin = nil
+    }
+
     
     // MARK: - Local Persistence
     
